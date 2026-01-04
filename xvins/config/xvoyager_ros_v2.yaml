@@ -1,0 +1,86 @@
+xvins_lifecycle_node:
+  ros__parameters:
+    # 基础参数
+    imu: 1 
+    num_of_cam: 2
+
+    # 订阅话题
+    imu_topic: "/mav/imu/data_raw"
+    image0_topic: "/camera/camera/infra1/image_rect_raw"
+    image1_topic: "/camera/camera/infra2/image_rect_raw"
+
+    output_path: "/home/greymatters/project/altivision/src/XVoyager/xvins/config"
+    config_path: "/home/greymatters/project/altivision/src/XVoyager/xvins/config"
+
+    cam0_calib: "left.yaml"
+    cam1_calib: "right.yaml"
+    image_width: 640
+    image_height: 480
+
+    track_method: 0  # 0: use optical flow to track features; 
+                     # 1: use ORB to track features; 
+
+    # Extrinsic parameter between IMU and Camera.
+    estimate_extrinsic: 0  # 0  Have an accurate extrinsic parameters. We will trust the following imu^R_cam, imu^T_cam, don't change it.
+                           # 1  Have an initial guess about extrinsic parameters. We will optimize around your initial guess.
+
+    body_T_cam0: [-0.03188721, -0.10060172,  0.99441566,  0.21581983,
+                  -0.99882811, -0.03303513, -0.03537076,  0.01622366,
+                   0.036409,   -0.99437818, -0.09943043, -0.08976416,
+                   0.,          0.,          0.,          1.]        
+    body_T_cam1: [-0.02940374, -0.10069382,  0.99448287,  0.21373543,
+                  -0.99890782, -0.03318323, -0.03289445, -0.03132592,
+                   0.03631242, -0.99436393, -0.09960814, -0.08792785,
+                   0.,          0.,          0.,          1.        ]
+
+    #Multiple thread support
+    multiple_thread: 1
+
+    #feature traker paprameters
+    max_cnt: 150           # max feature number in feature tracking
+    min_dist: 18            # min distance between two features 
+    freq: 10                # frequence (Hz) of publish tracking result. At least 10Hz for good estimation. If set 0, the frequence will be same as raw image 
+    F_threshold: 1.2     # ransac threshold (pixel)
+    show_track: 1           # publish tracking image as topic
+    flow_back: 1            # perform forward and backward optical flow to improve feature tracking accuracy
+
+    # orb feature parameters
+    nfeatures: 1000  # max number of features to retain
+    scale_factor: 1.2  # scale factor between levels in the scale pyramid
+    nlevels: 6  # number of pyramid levels
+    edge_threshold: 31  # size of the border where features are not detected
+    first_level: 0  # pyramid level to put the initial image
+    wta_k: 2  # number of points that produce each element of the oriented BRIEF descriptor
+    patch_size: 31  # size of the patch used by the oriented BRIEF descriptor
+    fast_threshold: 20  # fast threshold
+    orb_min_dist: 2.0
+
+    
+    #optimization parameters
+    max_solver_time: 0.015  # max solver itration time (ms), to guarantee real time
+    max_num_iterations: 2   # max solver itrations, to guarantee real time
+    keyframe_parallax: 10.0 # keyframe selection threshold (pixel)
+
+    #imu parameters    The more accurate parameters you provide, the better performance
+    acc_n: 0.12401182       # accelerometer measurement noise standard deviation. #0.2   0.04
+    gyr_n: 0.00530382      # gyroscope measurement noise standard deviation.     #0.05  0.004
+    acc_w: 0.003097232    # accelerometer bias random work noise standard deviation.  #0.002
+    gyr_w: 0.00023795401   # gyroscope bias random work noise standard deviation.     #4.0e-5
+    g_norm: 9.805    # gravity magnitude
+
+    #unsynchronization parameters
+    estimate_td: 0   # online estimate time offset between camera and imu
+    td: 0.009121   # initial value of time offset. unit: s. readed image clock + td = real image clock (IMU clock)
+
+    #loop closure parameters
+    load_previous_pose_graph: 0   # load and reuse previous pose graph; load from 'pose_graph_save_path'
+    pose_graph_save_path: "/home/fast/savedfiles/output/pose_graph/"   # save and load path
+    save_image: 1   # save image in pose graph for visualization prupose; you can close this function by setting 0 
+
+    use_gpu_acc_flow: 1  # use gpu for accumulate flow; 1: use gpu; 0: use cpu
+    use_gpu: 1
+
+    publish_rectify: 0
+    init_depth: 0.5
+    bias_acc_threshold: 0.1
+    bias_gry_threshold: 0.1
